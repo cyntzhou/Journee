@@ -6,7 +6,7 @@ from journee.models import Traveler
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import os
-<<<<<<< HEAD
+
 import urllib, json
 
 # flow = google_auth_oauthlib.flow.Flow.from_client_config(
@@ -18,8 +18,7 @@ import urllib, json
 # authorization_url, state = flow.authorization_url(
 #     access_type='offline',
 #     include_granted_scopes='true')
-=======
->>>>>>> 9ced7c851923bb7373167df809556b78c57548ea
+
     
 SCOPES = ['https://www.googleapis.com/auth/userinfo.email']
 
