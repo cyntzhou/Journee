@@ -6,23 +6,24 @@ import datetime
 from datetime import date
 
 class Traveler(models.Model):
-	first_name = models.CharField(max_length=50, null=True)
-	last_name = models.CharField(max_length=50, null=True)
-	facebook_username = models.CharField(max_length=50, null=True)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    email = models.CharField(max_length=50, null=True)
 
 class PointOfInterest(models.Model):
-	place_id = models.CharField(max_length=50)
+    place_id = models.CharField(max_length=50)
 
 class Event(models.Model):
-	date_event = models.DateField
-	hour = models.CharField(max_length=4)
-	place_id = models.CharField(max_length=50)
+    start_datetime = models.DateTimeField(default=date.today)
+    end_datetime = models.DateTimeField(default=date.today)
+    place = models.ForeignKey('PointOfInterest', on_delete=models.CASCADE, default=None)
+    proposed_by = models.ForeignKey('Traveler', on_delete=models.CASCADE, default=None)
 
-class TravelGroup(models.Model):
-	members = models.ManyToManyField(Traveler)
-	trip_name = models.CharField(max_length=50)
-	interested_points = models.ManyToManyField(PointOfInterest)
-	iternary = models.ManyToManyField(Event)
+class Trip(models.Model):
+    travelers = models.ManyToManyField(Traveler)
+    name = models.CharField(max_length=50)
+    interested_points = models.ManyToManyField(PointOfInterest)
+    itinerary = models.ManyToManyField(Event)
 
 
 
