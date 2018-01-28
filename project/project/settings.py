@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_django',
+    'reset_migrations',
 ]
 
 MIDDLEWARE = [
@@ -62,10 +64,22 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',  # <- Here
+                'social_django.context_processors.login_redirect', # <- Here
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+ 'social_core.backends.open_id.OpenIdAuth',  # for Google authentication
+ 'social_core.backends.google.GoogleOpenId',  # for Google authentication
+ 'social_core.backends.google.GoogleOAuth2',  # for Google authentication
+ # 'social_core.backends.github.GithubOAuth2',  # for Github authentication
+ # 'social_core.backends.facebook.FacebookOAuth2',  # for Facebook authentication
+ 
+ 'django.contrib.auth.backends.ModelBackend',
+)
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
@@ -118,3 +132,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='680374767023-vv8hjna6haek9q6fmb0tc03upgi7th6p.apps.googleusercontent.com'  #Paste CLient Key
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'KTdfOseGsxCmscm4Dbi1SCXs' #Paste Secret Key
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'trips'
