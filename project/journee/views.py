@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, render_to_response
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from journee.models import Traveler, PointOfInterest
+from journee.models import Traveler, PointOfInterest, Event
+from datetime import datetime
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -45,7 +46,7 @@ def get_google_data(request):
     final_list = []
     for i in range(len(destinations)):
         final_list.append(destinations[distances[i][0]])
-    print(final_list)
+    # print(final_list)
     return render(request, "journee/map.html")
 
 
@@ -69,16 +70,40 @@ def logout(request):
     
 def calendar(request):
     # return render(request, "journee/calendar.html")
-    context = {'events': ['event1']}
-    return render_to_response('journee/calendar.html', context=context)
+    events = []
+    for event in Event.objects.all():
+        event = {'title': event.place_id, 'placeId': event.place_id, 
+            'proposedBy': event.proposed_by.email, 
+            'startsAt': event.start_datetime.strftime("%a %d %b %Y %H:%M:%S"), 
+            'endsAt': event.end_datetime.strftime("%a %d %b %Y %H:%M:%S")}
+        events.append(event)
+    return render(request, 'journee/calendar.html', context={'events': events})
     
     
 def add_event(request):
+    # if request.method == 'GET':
+    #     return HttpResponse('Does not support get request')
+    # elif request.method == 'POST':
+    #     # TODO: check if POI exists alrdy
+    #     Event.objects.create(start_datetime=request.GET.get('start'), end_datetime=request.GET.get('end'), proposed_by=Traveler.objects.get(email=request.session.get('user')))
+    # return render(request, "journee/calendar.html")
+    
+    # start = datetime.strptime(request.GET.get('start'), '%Y-%m-%d %H:%M')
+    # end = datetime.strptime(request.GET.get('end'), '%Y-%m-%d %H:%M')
+    start_datetime = request.GET.get('start_datetime')
+    end_datetime = request.GET.get('end_datetime')
     if request.method == 'GET':
-        return HttpResponse('Does not support get request')
-    elif request.method == 'POST':
-        # TODO: check if POI exists alrdy
-        Event.objects.create(start_datetime=request.POST.start, end_datetime=request.POST.end, proposed_by=Traveler.objects.get(email=request.session.get('user')))
+        Event.objects.create(start_datetime=start_datetime, end_datetime=end_datetime, 
+            proposed_by=Traveler.objects.get(email=request.session.get('user')), place=PointOfInterest.objects.get(place_id=request.GET.get('place_id')))
+    return render(request, "journee/calendar.html")
+
+def delete_event(request):
+    start_datetime = request.GET.get('start_datetime')
+    end_datetime = request.GET.get('end_datetime')
+    if request.method == 'GET':
+        event = Event.objects.filter(start_datetime=start_datetime, end_datetime=end_datetime, 
+            place=PointOfInterest.objects.get(place_id=request.GET.get('place_id')))[0]
+        event.delete()
     return render(request, "journee/calendar.html")
 
 def map(request):
