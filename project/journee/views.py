@@ -26,9 +26,6 @@ SCOPES = ['https://www.googleapis.com/auth/userinfo.email']
 # Create your views here.
 def index(request):
 	return render(request, "journee/index.html")
-
-def login(request):
-    return render(request, "journee/login.html")
     
 def myinfo(request):
     return HttpResponse(request.session.get('user'))
@@ -73,7 +70,7 @@ def auth(request):
     except ObjectDoesNotExist:
         Traveler.objects.create(email=email)
     request.session['user'] = email
-    return redirect('myinfo')
+    return redirect('calendar')
     
 def logout(request):
     request.session['user'] = None
