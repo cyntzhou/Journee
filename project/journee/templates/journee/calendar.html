@@ -168,7 +168,10 @@
           // document.getElementById("interesante").innerHTML += place.name;
           // linebreak = document.createElement("br");
           // ocument.getElementById("interesante").innerHTML += linebreak;
-          name = "<a href='#" + idemize(place.name) +"' class='w3-bar-item w3-button'>" + place.name + "</a style='display:inline-block'>" + "<button type='button' onclick='removeInterest(" + place.name + ")'>x</button>";
+          // name = "<a href='#" + idemize(place.name) +"' class='w3-bar-item w3-button'>" + place.name + "</a style='display:inline-block'>" + "<button type='button' onclick='removeInterest(" + place.name + ")'>x</button>";
+
+          name = "<a href='javascript:;'' >" + place.name + "</a>" 
+
           document.getElementById("interesante").innerHTML += name;
 
 
@@ -482,19 +485,19 @@
         <input id="place_name" type="text" name="place_id" value="">
         <input type="submit" value="Add Point of Interest">
       </form> -->
-      <div class="w3-sidebar w3-light-grey w3-bar-block over_map" style="width: 217px">
+      <div id="interesante" class="w3-sidebar w3-light-grey w3-bar-block over_map" style="width: 217px">
         <h2 class="text-center">Points of Interest</h2>
         <ul>
-          <li
+          <li 
             ng-repeat="event in vm.externalEvents track by $index"
             mwl-draggable="true"
             drop-data="{event: event}">
-            <a
+<!--             <a
               href="javascript:;"
               ng-class="'text-' + event.type">
               HELLO!!
               <!-- {{ event.title }} -->
-            </a>
+            </a> -->
           </li>
         </ul>
       </div>
