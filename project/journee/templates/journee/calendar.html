@@ -13,7 +13,12 @@
     <link href="https://unpkg.com/bootstrap@3/dist/css/bootstrap.css" rel="stylesheet">
     <link href="https://unpkg.com/angular-bootstrap-colorpicker@3/css/colorpicker.min.css" rel="stylesheet">
     <link href="https://unpkg.com/angular-bootstrap-calendar/dist/css/angular-bootstrap-calendar.min.css" rel="stylesheet">
+
+    <link rel="shortcut icon" href="favicon.ico" />
+
+
     <script>
+
     angular.module('mwl.calendar.docs', ['mwl.calendar', 'ngAnimate', 'ui.bootstrap', 'colorpicker.module']);
     angular
       .module('mwl.calendar.docs')
@@ -25,7 +30,7 @@
 
         vm.externalEvents = [
           {
-            title: 'Event 1',
+            title: 'Stature of Cynthia',
             type: 'warning',
             color: calendarConfig.colorTypes.warning,
             startsAt: moment().startOf('month').toDate(),
@@ -46,13 +51,13 @@
               }
             }]
           },
-          {
-            title: 'Event 2',
-            type: 'danger',
-            color: calendarConfig.colorTypes.important,
-            startsAt: moment().startOf('month').toDate(),
-            draggable: true
-          }
+          // {
+          //   title: 'Event 2',
+          //   type: 'danger',
+          //   color: calendarConfig.colorTypes.important,
+          //   startsAt: moment().startOf('month').toDate(),
+          //   draggable: true
+          // }
         ];
 
         vm.calendarView = 'month';
@@ -128,6 +133,10 @@
     </script>
   </head>
   <body>
+
+    <!-- <button type="button" class="btn btn-info btn-lg" onclick="giveInterest()">Add an Interest</button> -->
+
+
     <div ng-controller="DraggableExternalEventsCtrl as vm">
 
   <div class="row">
@@ -147,13 +156,13 @@
         </ul>
       </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-5" style="float: right; padding-bottom: 12px">
       
       
       <br>
       <div class="row">
 
-        <div class="col-md-6 text-center">
+        <div class="col-md-5 text-center">
           <div class="btn-group">
 
             <button
@@ -209,6 +218,9 @@
     </div>
   </div>
 </div>
+
+
+
 
   </body>
 </html>
