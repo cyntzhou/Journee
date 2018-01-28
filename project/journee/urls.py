@@ -5,6 +5,8 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('login', views.login, name='login'),
+    path('logout', views.logout, name='logout'),
+    path('myinfo', views.myinfo, name='myinfo'),
     path('trips', views.trips, name='trips'),
     path('auth/complete/google-oauth2/', views.auth, name='auth'),
     path('calendar', views.calendar, name='calendar'),
