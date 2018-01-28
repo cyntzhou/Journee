@@ -25,20 +25,14 @@
 
         var vm = this;
         
-        // var parser = new DOMParser;
-        // var dom = parser.parseFromString("{{events}}", 'text/html')
-        // var eventz = dom.body.textContent
-
-        // vm.events = eventz
         {% autoescape off %}
-
-        vm.events = {{ events }};
-        
+        eventsList = {{ events }};
         {% endautoescape %}
 
-        for (event in vm.events) {
-          event.draggable = true,
-          event.actions = [{
+        for (i=0; i<eventsList.length; i++) {
+          eventsList[i].draggable = true,
+          eventsList[i].color = calendarConfig.colorTypes.warning,
+          eventsList[i].actions = [{
             label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
             onClick: function(args) {
               alert.show('Edited', args.calendarEvent);
@@ -58,15 +52,10 @@
             }
           }]
         }
-
-        // vm.events = [
-        //   {
-        //     title: 'Event 2',
-        //     startsAt: moment().startOf('month').toDate(),
-        //     draggable: true
-        //   }
-        // ];
-        // vm.events = [{'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 03 Jan 2018 01:00:00', 'endsAt': 'Wed 03 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 10 Jan 2018 01:00:00', 'endsAt': 'Wed 10 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 10 Jan 2018 01:00:00', 'endsAt': 'Wed 10 Jan 2018 01:00:00', 'draggable': true}]
+        
+        console.log(eventsList)
+        
+        vm.events = eventsList
 
         vm.externalEvents = [
           {
