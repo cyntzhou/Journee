@@ -14,7 +14,263 @@
     <link href="https://unpkg.com/angular-bootstrap-colorpicker@3/css/colorpicker.min.css" rel="stylesheet">
     <link href="https://unpkg.com/angular-bootstrap-calendar/dist/css/angular-bootstrap-calendar.min.css" rel="stylesheet">
 
-    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<style type="text/css">
+ .topcorner{
+   position:absolute;
+   top:0;
+   right:0;
+  }
+</style>
+
+<style type="text/css">
+ .topleftcorner{
+   position:absolute;
+   top:0;
+   left:0;
+  }
+</style>
+
+    <style>
+      #map {
+        height: 100%;
+        position: relative;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        width: 65%;
+        margin: 0;
+        margin-left: 10%;
+      }
+      .controls {
+        background-color: #fff;
+        border-radius: 2px;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        height: 29px;
+        margin-left: 17px;
+        margin-top: 10px;
+        outline: none;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
+
+      .controls:focus {
+        border-color: #4d90fe;
+      }
+      .title {
+        font-weight: bold;
+      }
+      #infowindow-content {
+        display: none;
+      }
+      #map #infowindow-content {
+        display: inline;
+      }
+
+    </style>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+         .over_map { position: absolute; top: 10px; left: 10px; z-index: 99; padding-left: 0; float: left; }
+    </style>
+
+
+
+    <input id="pac-input" class="controls" type="text"
+        placeholder="Enter a location">
+    <div id="map"></div>
+    <div id="infowindow-content">
+      <span id="place-name"  class="title"></span><br>
+      Place ID <span id="place-id"></span><br>
+      <span id="place-address"></span>
+    </div>
+
+    <script>
+      // This sample uses the Place Autocomplete widget to allow the user to search
+      // for and select a place. The sample then displays an info window containing
+      // the place ID and other information about the place that the user has
+      // selected.
+
+      // This example requires the Places library. Include the libraries=places
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+      var interests = [];
+
+      function idemize(string) {
+        string = string.replace(/\s+/g, '-').toLowerCase();
+        return string
+      }
+
+      function removeInterest(interest) {
+        if (interests.indexOf(interest) > -1) {
+          interests.remove(interest);
+          document.getElementById(idemize(interest)).outerHTML='';
+        }
+      }
+
+      function initMap() {
+        // console.log("{{data}}")
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -33.8688, lng: 151.2195},
+          zoom: 13
+        });
+
+        var input = document.getElementById('pac-input');
+
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo('bounds', map);
+
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        var infowindow = new google.maps.InfoWindow();
+        var infowindowContent = document.getElementById('infowindow-content');
+        infowindow.setContent(infowindowContent);
+        var marker = new google.maps.Marker({
+          map: map
+        });
+        marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
+
+        autocomplete.addListener('place_changed', function() {
+          infowindow.close();
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+            return;
+          }
+
+          if (place.geometry.viewport) {
+            map.fitBounds(place.geometry.viewport);
+          } else {
+            map.setCenter(place.geometry.location);
+            map.setZoom(17);
+          }
+
+          // Set the position of the marker using the place ID and location.
+          marker.setPlace({
+            placeId: place.place_id,
+            location: place.geometry.location
+          });
+          marker.setVisible(true);
+
+          alert(place.name);
+          interests.push(place.name);
+          alert(interests);
+          // document.getElementById("interesante").innerHTML += place.name;
+          // linebreak = document.createElement("br");
+          // ocument.getElementById("interesante").innerHTML += linebreak;
+          name = "<a href='#" + idemize(place.name) +"' class='w3-bar-item w3-button'>" + place.name + "</a style='display:inline-block'>" + "<button type='button' onclick='removeInterest(" + place.name + ")'>x</button>";
+          document.getElementById("interesante").innerHTML += name;
+
+
+          infowindowContent.children['place-name'].textContent = place.name;
+          infowindowContent.children['place-id'].textContent = place.place_id;
+          infowindowContent.children['place-address'].textContent =
+              place.formatted_address;
+          infowindow.open(map, marker);
+        });
+        /*
+        function initialize() {
+          // Create a map centered in Pyrmont, Sydney (Australia).
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -33.8666, lng: 151.1958},
+            zoom: 15
+          });
+
+          // Search for Google's office in Australia.
+          var request = {
+            location: map.getCenter(),
+            radius: '500',
+            query: 'Google Sydney'
+          };
+
+          var service = new google.maps.places.PlacesService(map);
+          service.textSearch(request, callback);
+        }
+*/
+        // Checks that the PlacesServiceStatus is OK, and adds a marker
+        // using the place ID and location from the PlacesService.
+        var list_of_places = [];
+        function callback(results, status) {
+          if (status == google.maps.places.PlacesServiceStatus.OK) {
+            var marker = new google.maps.Marker({
+              map: map,
+              place: {
+                placeId: results[0].place_id,
+                location: results[0].geometry.location
+
+              }
+            });
+            list_of_places.push(marker['place'['placeId']]);
+          }
+        }
+        
+        var makeURL = function(origin, destinations) {
+          var overall_url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=";
+          overall_url += "place_id:";
+          overall_url += origin;
+          overall_url += '&destinations=';
+          for (i = 0; i < destinations.length; i++) { 
+            if (i > 0) {
+              overall_url+='%7C';
+            }
+            overall_url += ("place_id:" + destinations[i]);
+          }
+          overall_url += "&key=AIzaSyDOeTikeScYEd-fDy9hPPzfZPAmzZIvQn8";
+          return overall_url;
+        }
+        
+        var origin = "ChIJNyX2Sfl544kRnFqtCyhupcM";
+        var destinations = ["ChIJKSX79MGG44kRrkbbLt43Wbg", "ChIJmQF_fUJ344kR8Cck7lzGN1k", "ChIJkWKyV_5544kRvAsQAwhP0qQ", "ChIJJy8l-oFw44kRfQXB8UXfIKY", "EisxODYgQW1oZXJzdCBBbGxleSwgQ2FtYnJpZGdlLCBNQSAwMjEzOSwgVVNB"];
+        var url = makeURL(origin, destinations);
+        console.log(url);
+
+        var origin2 = "ChIJrbS_8-Fv5kcRzSjPvnUT03s";
+        var destinations2 = ["ChIJD3uTd9hx5kcR1IQvGfr8dbk", "ChIJEx1hct1x5kcR8cYrn0H-GkQ", "ChIJAQAAMCxu5kcRx--_4QnbGcI"];
+        var url2 = makeURL(origin2, destinations2);
+        console.log(url2);
+
+        var getJSON = function(url) {
+          var params = {
+            url: url
+          }
+
+          function formatParams( params ){
+            return "?" + Object
+                  .keys(params)
+                  .map(function(key){
+                    return key+"="+encodeURIComponent(params[key])
+                  })
+                  .join("&")
+          }
+
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', './get_google_data' + formatParams(params), true);
+          xhr.responseType = 'json';
+          xhr.send();
+          console.log(xhr);
+          return xhr;
+        };
+
+        var jsonFILE = getJSON(url);
+        var jsonFILE = getJSON(url2);
+        
+      }
+        
+    </script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOeTikeScYEd-fDy9hPPzfZPAmzZIvQn8&libraries=places&callback=initMap"
+        async defer></script>
+
 
     <script>
 
@@ -51,6 +307,11 @@
 
         var vm = this;
         
+        // var parser = new DOMParser;
+        // var dom = parser.parseFromString("{{events}}", 'text/html')
+        // var eventz = dom.body.textContent
+
+        // vm.events = eventz
         {% autoescape off %}
         eventsList = {{ events }};
         poisList = {{ pois }};
@@ -238,14 +499,14 @@
 
 
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-6 topleftcorner">
       <!-- <form action="./add_poi" method="post">
         <label for="place_name">Place name: </label>
         <input id="place_name" type="text" name="place_id" value="">
         <input type="submit" value="Add Point of Interest">
       </form> -->
-      <div class="well">
-        <h1>Points of Interest</h1>
+      <div class="w3-sidebar w3-light-grey w3-bar-block over_map" style="width: 217px">
+        <h2 class="text-center">Points of Interest</h2>
         <ul>
           <li
             ng-repeat="event in vm.externalEvents track by $index"
@@ -261,7 +522,7 @@
       </div>
     </div>
 
-    <div class="col-md-5" style="float: right; padding-bottom: 12px">
+    <div class="col-md-5 topcorner" style="float: right; padding-bottom: 12px">
       
       
       <br>

@@ -85,10 +85,14 @@ def calendar(request):
     for event in Event.objects.all():
         event = {'title': event.place_id, 'placeId': event.place_id, 
             'proposedBy': event.proposed_by.email, 
-            'startsAt': event.start_datetime.strftime("%a %d %b %Y %H:%M:%S"), 
-            'endsAt': event.end_datetime.strftime("%a %d %b %Y %H:%M:%S")}
+            'startsAt': event.start_datetime.strftime("%a %b %d %Y %H:%M:%S"), 
+            'endsAt': event.end_datetime.strftime("%a %b %d %Y %H:%M:%S")}
         events.append(event)
-    return render(request, 'journee/calendar.html', context={'events': events})
+    pois = []
+    for poi in PointOfInterest.objects.all():
+        poi = {'place_id': poi.place_id, 'title': "PLACE NAME"} #TODO: edit title
+        pois.append(poi)
+    return render(request, 'journee/calendar.html', context={'events': events, 'pois': pois})
     
 
 def add_poi(request):
