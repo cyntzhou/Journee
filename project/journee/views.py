@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from journee.models import Traveler
+from journee.models import Traveler, PointOfInterest
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -38,4 +38,15 @@ def logout(request):
     return HttpResponse('logged out')
     
 def calendar(request):
-    return render(request, "journee/calendar.html")
+    # return render(request, "journee/calendar.html")
+    context = {'events': ['event1']}
+    return render_to_response('journee/calendar.html', context=context)
+    
+    
+def add_event(request):
+    if request.method == 'GET':
+        return HttpResponse('Does not support get request')
+    elif request.method == 'POST':
+        # TODO: check if POI exists alrdy
+        Event.objects.create(start_datetime=request.POST.start, end_datetime=request.POST.end, proposed_by=Traveler.objects.get(email=request.session.get('user')))
+        return redirect('calendar')

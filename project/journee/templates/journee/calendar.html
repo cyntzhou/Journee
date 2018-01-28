@@ -16,7 +16,6 @@
 
     <link rel="shortcut icon" href="favicon.ico" />
 
-
     <script>
 
     angular.module('mwl.calendar.docs', ['mwl.calendar', 'ngAnimate', 'ui.bootstrap', 'colorpicker.module']);
@@ -25,7 +24,8 @@
       .controller('DraggableExternalEventsCtrl', function(moment, calendarConfig) {
 
         var vm = this;
-
+        
+        // vm.events = {{events}};
         vm.events = [];
 
         vm.externalEvents = [
@@ -64,11 +64,29 @@
         vm.viewDate = moment().startOf('month').toDate();
         vm.cellIsOpen = false;
 
+        var post_to_url = function(url, params) {
+          var form = document.createElement('form');
+          form.action = url;
+          form.method = 'POST';
+          for (var i in params) {
+              if (params.hasOwnProperty(i)) {
+                  var input = document.createElement('input');
+                  input.type = 'hidden';
+                  input.name = i;
+                  input.value = params[i];
+                  form.appendChild(input);
+              }
+          }
+          form.submit();
+        }
+
         vm.eventDropped = function(event, start, end) {
           var externalIndex = vm.externalEvents.indexOf(event);
           if (externalIndex > -1) {
             vm.externalEvents.splice(externalIndex, 1);
             vm.events.push(event);
+            params = {start: start, end: end, place_id: 'hi'}
+            post_to_url('./add_event', params)
           }
           event.startsAt = start;
           console.log(event.startsAt);
@@ -139,8 +157,15 @@
 
     <div ng-controller="DraggableExternalEventsCtrl as vm">
 
+  {{events}}
+
   <div class="row">
     <div class="col-md-3">
+      <!-- <form action="./add_poi" method="post">
+        <label for="place_name">Place name: </label>
+        <input id="place_name" type="text" name="place_id" value="">
+        <input type="submit" value="Add Point of Interest">
+      </form> -->
       <div class="well">
         <ul>
           <li
