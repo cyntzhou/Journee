@@ -90,7 +90,22 @@ def calendar(request):
         events.append(event)
     return render(request, 'journee/calendar.html', context={'events': events})
     
-    
+
+def add_poi(request):
+    place_id = request.GET.get('place_id')
+    if request.method == 'GET':
+        PointOfInterest.objects.create(place_id=place_id)
+    return render(request, "journee/calendar.html")
+
+
+def delete_poi(request):
+    place_id = request.GET.get('place_id')
+    if request.method == 'GET':
+        poi = PointOfInterest.objects.get(place_id=place_id)
+        poi.delete()
+    return render(request, "journee/calendar.html")
+
+
 def add_event(request):
     # if request.method == 'GET':
     #     return HttpResponse('Does not support get request')

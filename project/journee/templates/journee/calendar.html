@@ -216,6 +216,7 @@
         <input type="submit" value="Add Point of Interest">
       </form> -->
       <div class="well">
+        <h1>Points of Interest</h1>
         <ul>
           <li
             ng-repeat="event in vm.externalEvents track by $index"
@@ -224,12 +225,14 @@
             <a
               href="javascript:;"
               ng-class="'text-' + event.type">
-              {{ event.title }}
+              HELLLO!!!
+              <!-- {{ event.title }} -->
             </a>
           </li>
         </ul>
       </div>
     </div>
+
     <div class="col-md-5" style="float: right; padding-bottom: 12px">
       
       
