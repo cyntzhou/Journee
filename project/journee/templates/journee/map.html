@@ -4,17 +4,20 @@
     <title>Place ID Finder</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
     <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
       #map {
         height: 100%;
+        position: relative;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
+        width: 70%;
         margin: 0;
-        padding: 0;
+        margin-left: 9%;
       }
       .controls {
         background-color: #fff;
@@ -48,8 +51,20 @@
       }
 
     </style>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+         .over_map { position: absolute; top: 10px; left: 10px; z-index: 99; padding-left: 0; float: left; }
+    </style>
   </head>
   <body>
+    <div id="interesante" class="w3-sidebar w3-light-grey w3-bar-block over_map" style="width:15%, margin-left:0">
+      <h3 class="w3-bar-item">Interests</h3>
+    </div>
+<!--     <div class="over_map"> 
+      <h2 id="interesante">Interests???</h2>
+    </div> -->
+
     <input id="pac-input" class="controls" type="text"
         placeholder="Enter a location">
     <div id="map"></div>
@@ -68,6 +83,20 @@
       // This example requires the Places library. Include the libraries=places
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+      var interests = [];
+
+      function idemize(string) {
+        string = string.replace(/\s+/g, '-').toLowerCase();
+        return string
+      }
+
+      function removeInterest(interest) {
+        if (interests.indexOf(interest) > -1) {
+          interests.remove(interest);
+          document.getElementById(idemize(interest)).outerHTML='';
+        }
+      }
 
       function initMap() {
         console.log("{{data}}")
@@ -113,6 +142,16 @@
             location: place.geometry.location
           });
           marker.setVisible(true);
+
+          alert(place.name);
+          interests.push(place.name);
+          alert(interests);
+          // document.getElementById("interesante").innerHTML += place.name;
+          // linebreak = document.createElement("br");
+          // ocument.getElementById("interesante").innerHTML += linebreak;
+          name = "<a href='#" + idemize(place.name) +"' class='w3-bar-item w3-button'>" + place.name + "</a style='display:inline-block'>" + "<button type='button' onclick='removeInterest(" + place.name + ")'>x</button>";
+          document.getElementById("interesante").innerHTML += name;
+
 
           infowindowContent.children['place-name'].textContent = place.name;
           infowindowContent.children['place-id'].textContent = place.place_id;
@@ -246,13 +285,13 @@
         }
         
       }
+    
+    
     </script>
     
-    <script>
-      console.log(5 + 6);
-      
-    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOeTikeScYEd-fDy9hPPzfZPAmzZIvQn8&libraries=places&callback=initMap"
         async defer></script>
+
+
   </body>
 </html>

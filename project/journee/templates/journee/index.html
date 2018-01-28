@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <link rel="shortcut icon" href="favicon.ico" />
 
-    <title>Brownbear</title>
+    <title>Journee</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -59,6 +60,10 @@
     	padding-top: 180px;
     	padding-bottom: 180px;
     }
+
+    h2.abouto {
+      width: 60%;
+    }
     </style>
 
   </head>
@@ -68,14 +73,14 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <div class="container">
-        <a class="navbar-brand nav-title" href="#">Journee</a>
+        <a class="navbar-brand nav-title" href="#home">Journee</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+        <div class="navbar collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#home">Home
+              <a class="nav-link" href="#">Home
                 <span class="sr-only">(current)</span>
               </a>
             </li>
@@ -104,16 +109,29 @@
 
     </div>
 
-    <div id="about" class="bg-1 text-center paddings">
-      <h1>hi</h1>
-      <h1>jamie</h1>
-      <h1>angela</h1>
-      <h1>kaylee</h1>
+    <div id="about" class="abouto bg-1 text-center paddings">
+      <h1>About Journee</h1>
+      <br>
+      <h2>Planning trips can get messy and difficult,</h2>
+      <h2>whether through text, phone, or messenging apps.</h2>
+      <h2>Journee allows you to plan where you'll visit and stay</h2>
+      <h2>through a simple dashboard and easy drag and drop.</h2>
+      <h2>Get the most out of your trip!</h2>
+      <h2>Happy travelling!</h2>
+      <br>
+      <br>
+      <img src="about.jpeg" style="border-radius: 50%">
+
     </div>
 
     <div id="contact" class="text-center paddings">
-      <h1>bye</h1>
-      <h1>breadie friends</h1>
+      <h1>We'd love to hear from you!</h1>
+      <h2>Contact us at breadiefriends@mit.edu.</h2>   
+      <br>
+      <img src="starfish.jpg" style="border-radius: 5%; height: 15%; width: 15%">
+      <br>
+      <br>
+      <h2>-Breadie Friends Co.</h2>
     </div>
 
 
@@ -159,7 +177,7 @@
       $('[data-toggle="tooltip"]').tooltip(); 
       
       // Add smooth scrolling to all links in navbar + footer link
-      $(".navbar a").on('click', function(event) {
+      $(".navbar nav-item a").on('click', function(event) {
 
         // Make sure this.hash has a value before overriding default behavior
         if (this.hash !== "") {
