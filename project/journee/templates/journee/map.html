@@ -99,7 +99,7 @@
       }
 
       function initMap() {
-        console.log("{{data}}")
+        // console.log("{{data}}")
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: -33.8688, lng: 151.2195},
           zoom: 13
@@ -201,32 +201,24 @@
           overall_url += origin;
           overall_url += '&destinations=';
           for (i = 0; i < destinations.length; i++) { 
-            overall_url += "place_id:" + destinations[i];
+            if (i > 0) {
+              overall_url+='%7C';
+            }
+            overall_url += ("place_id:" + destinations[i]);
           }
           overall_url += "&key=AIzaSyDOeTikeScYEd-fDy9hPPzfZPAmzZIvQn8";
           return overall_url;
         }
         
         var origin = "ChIJNyX2Sfl544kRnFqtCyhupcM";
-        var destinations = ["ChIJkWKyV_5544kRvAsQAwhP0qQ"];
+        var destinations = ["ChIJKSX79MGG44kRrkbbLt43Wbg", "ChIJmQF_fUJ344kR8Cck7lzGN1k", "ChIJkWKyV_5544kRvAsQAwhP0qQ", "ChIJJy8l-oFw44kRfQXB8UXfIKY", "EisxODYgQW1oZXJzdCBBbGxleSwgQ2FtYnJpZGdlLCBNQSAwMjEzOSwgVVNB"];
         var url = makeURL(origin, destinations);
         console.log(url);
-        //google.maps.event.addDomListener(window, 'load', initialize);
-        /*var getJSON = function(url, callback) {
-          var xhr = new XMLHttpRequest();
-          xhr.open('GET', url, true);
-          xhr.responseType = 'json';
-          xhr.onload = function() {
-            var status = xhr.status;
-            if (status === 200) {
-              callback(null, xhr.response);
-            } else {
-              callback(status, xhr.response);
-            }
-          };
-          xhr.send();
-          return json_file;
-        };*/
+
+        var origin2 = "ChIJrbS_8-Fv5kcRzSjPvnUT03s";
+        var destinations2 = ["ChIJD3uTd9hx5kcR1IQvGfr8dbk", "ChIJEx1hct1x5kcR8cYrn0H-GkQ", "ChIJAQAAMCxu5kcRx--_4QnbGcI"];
+        var url2 = makeURL(origin2, destinations2);
+        console.log(url2);
 
         var getJSON = function(url) {
           var params = {
@@ -245,48 +237,16 @@
           var xhr = new XMLHttpRequest();
           xhr.open('GET', './get_google_data' + formatParams(params), true);
           xhr.responseType = 'json';
-          /*
-          xhr.onload = function() {
-            var status = xhr.status;
-            if (status === 200) {
-              callback(null, xhr.response);
-            } else {
-              callback(status, xhr.response);
-            }
-          };
-          */
           xhr.send();
           console.log(xhr);
           return xhr;
         };
 
         var jsonFILE = getJSON(url);
-        
-
-        var analyzeJSON = function(file) {
-          var destinations = file['destinations'];
-          var rows = file['rows'];
-          var distances = [];
-          for (i = 0; i < rows.length; i++) { 
-            distances.push((i, rows[i].distance));
-          }
-          distances.sort(function(a,b){return a[1] < b[1]})
-          var final_list = [];
-          for (i = 0; i < rows.length; i++) { 
-            final_list.push(destinations[distances[i]]);
-          }
-        }
-
-        var orderedDestinations = function(origin, destinations) {
-          var overall_url = makeURL(origin, destinations);
-          var json_file = getJSON(overall_url);
-          var ordered_distances = analyzeJSON(json_file);
-          return ordered_distances;
-        }
+        var jsonFILE = getJSON(url2);
         
       }
-    
-    
+        
     </script>
     
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOeTikeScYEd-fDy9hPPzfZPAmzZIvQn8&libraries=places&callback=initMap"

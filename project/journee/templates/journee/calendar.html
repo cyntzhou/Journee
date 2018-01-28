@@ -16,7 +16,6 @@
 
     <link rel="shortcut icon" href="favicon.ico" />
 
-
     <script>
 
     angular.module('mwl.calendar.docs', ['mwl.calendar', 'ngAnimate', 'ui.bootstrap', 'colorpicker.module']);
@@ -25,8 +24,49 @@
       .controller('DraggableExternalEventsCtrl', function(moment, calendarConfig) {
 
         var vm = this;
+        
+        // var parser = new DOMParser;
+        // var dom = parser.parseFromString("{{events}}", 'text/html')
+        // var eventz = dom.body.textContent
 
-        vm.events = [];
+        // vm.events = eventz
+        {% autoescape off %}
+
+        vm.events = {{ events }};
+        
+        {% endautoescape %}
+
+        for (event in vm.events) {
+          event.draggable = true,
+          event.actions = [{
+            label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
+            onClick: function(args) {
+              alert.show('Edited', args.calendarEvent);
+            }
+          },
+          {
+            label: '<i class=\'glyphicon glyphicon-remove\'></i>',
+            onClick: function(args) {
+              eventInfo = args.calendarEvent
+              if (confirm('Are you sure you want to delete this event?')) {
+                //delete event
+                params = {start_datetime: formatDate(eventInfo.startsAt), end_datetime: formatDate(eventInfo.endsAt), place_id: eventInfo.placeId}
+                url = './delete_event'
+                sendRequest(url, params)
+                location.reload();
+              };
+            }
+          }]
+        }
+
+        // vm.events = [
+        //   {
+        //     title: 'Event 2',
+        //     startsAt: moment().startOf('month').toDate(),
+        //     draggable: true
+        //   }
+        // ];
+        // vm.events = [{'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 03 Jan 2018 01:00:00', 'endsAt': 'Wed 03 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 10 Jan 2018 01:00:00', 'endsAt': 'Wed 10 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 10 Jan 2018 01:00:00', 'endsAt': 'Wed 10 Jan 2018 01:00:00', 'draggable': true}]
 
         vm.externalEvents = [
           {
@@ -44,8 +84,12 @@
             {
               label: '<i class=\'glyphicon glyphicon-remove\'></i>',
               onClick: function(args) {
+                eventInfo = args.calendarEvent
                 if (confirm('Are you sure you want to delete this event?')) {
                   //delete event
+                  params = {start_datetime: formatDate(eventInfo.startsAt), end_datetime: formatDate(eventInfo.endsAt), place_id: eventInfo.placeId}
+                  url = './delete_event'
+                  sendRequest(url, params)
                   location.reload();
                 };
               }
@@ -63,18 +107,52 @@
         vm.calendarView = 'month';
         vm.viewDate = moment().startOf('month').toDate();
         vm.cellIsOpen = false;
-
+        
+        var formatDate = function(date) {  
+          console.log(date)
+          var hours = date.getHours();
+          var minutes = date.getMinutes();
+          minutes = minutes < 10 ? '0'+minutes : minutes;
+          var strTime = hours + ':' + minutes;
+          return date.getFullYear() + "-" + date.getMonth()+1 + "-" + date.getDate() + " " + strTime;
+        }
+        
+        var sendRequest = function(url, params) {
+          function formatParams( params ){
+            return "?" + Object
+                  .keys(params)
+                  .map(function(key){
+                    return key+"="+encodeURIComponent(params[key])
+                  })
+                  .join("&")
+          }
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', url + formatParams(params), true);
+          xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhr.responseType = 'json';
+          xhr.send(formatParams(params));
+        }
+        
         vm.eventDropped = function(event, start, end) {
           var externalIndex = vm.externalEvents.indexOf(event);
           if (externalIndex > -1) {
             vm.externalEvents.splice(externalIndex, 1);
             vm.events.push(event);
+            placeId = '1';
+            start_datetime = new Date(start)
+            if (!end) {
+              end_datetime = start_datetime;
+              end_datetime.setHours(start_datetime.getHours() + 1);
+            } else {
+              end_datetime = new Date(end)
+            }
+            params = {start_datetime: formatDate(start_datetime), end_datetime: formatDate(end_datetime), place_id: placeId}
+            url = './add_event'
+            sendRequest(url, params)
           }
-          event.startsAt = start;
-          console.log(event.startsAt);
-          if (end) {
-            event.endsAt = end;
-          }
+          event.startsAt = start_datetime;
+          event.endsAt = end_datetime;
+          event.placeId = placeId
           vm.viewDate = start;
           vm.cellIsOpen = true;
         };
@@ -139,8 +217,15 @@
 
     <div ng-controller="DraggableExternalEventsCtrl as vm">
 
+  {{events}}
+
   <div class="row">
     <div class="col-md-3">
+      <!-- <form action="./add_poi" method="post">
+        <label for="place_name">Place name: </label>
+        <input id="place_name" type="text" name="place_id" value="">
+        <input type="submit" value="Add Point of Interest">
+      </form> -->
       <div class="well">
         <ul>
           <li
