@@ -32,17 +32,43 @@ def login(request):
 def myinfo(request):
     return HttpResponse(request.session.get('user'))
 
+
+'''
+    ROWS:  [{'elements': [{'distance': {'text': '0.4 mi', 'value': 680}, 'duration': {'text': '2 mins', 'value': 95}, 'status': 'OK'}, {'distance': {'text': '3.9 mi', 'value': 6294}, 'duration': {'text': '13 mins', 'value': 774}, 'status': 'OK'}]}]
+    
+    [{'elements': [{'distance': {'text': '0.4 mi', 'value': 680}, 'duration': {'text': '2 mins', 'value': 95}, 'status': 'OK'}, {'distance': {'text': '3.9 mi', 'value': 6294}, 'duration': {'text': '13 mins', 'value': 774}, 'status': 'OK'}]}]
+    
+    DESTINATIONS:  ['229 Vassar St, Cambridge, MA 02139, USA', '700 Atlantic Ave #2, Boston, MA 02110, USA']
+    
+    DISTANCES  [(0, '0.4 mi')]
+'''
 def get_google_data(request):
     url = request.GET.get('url')
     response = urllib.request.urlopen(url)
     data = json.loads(response.read())
     destinations = data.get("destination_addresses")
     rows = data.get("rows")
+    # print("ROWS: ", rows)
+    # print("rows length: ", len(rows))
+    # print(rows[0])
+    '''
+    {'elements': [{'distance': {'text': '0.4 mi', 'value': 680}, 'duration': {'text': '2 mins', 'value': 95}, 'status': 'OK'}, {'distance': {'text': '3.9 mi', 'value': 6294}, 'duration': {'text': '13 mins', 'value': 774}, 'status': 'OK'}]}
+    '''
+    # print(rows[0]['elements'])
+    '''
+    [{'distance': {'text': '0.4 mi', 'value': 680}, 'duration': {'text': '2 mins', 'value': 95}, 'status': 'OK'}, {'distance': {'text': '3.9 mi', 'value': 6294}, 'duration': {'text': '13 mins', 'value': 774}, 'status': 'OK'}]
+    '''
     distances = []
-    for i in range(len(rows)):
-        distances.append((i, rows[i]['elements'][0]['distance']['text']))
+    for i in range(len(rows[0]['elements'])):
+        dist_mile = rows[0]['elements'][i]['distance']['text']
+        str_dist = dist_mile.split()
+        distances.append((i, float(str_dist[0])))
     distances.sort(key=lambda x: x[1])
+    
     final_list = []
+    # print("DESTINATIONS: ", destinations)
+    print("DISTANCES ", distances)
+
     for i in range(len(destinations)):
         final_list.append(destinations[distances[i][0]])
     print(final_list)
