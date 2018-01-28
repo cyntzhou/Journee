@@ -282,90 +282,6 @@
       .module('mwl.calendar.docs')
       .controller('DraggableExternalEventsCtrl', function(moment, calendarConfig) {
 
-        var vm = this;
-        
-        // var parser = new DOMParser;
-        // var dom = parser.parseFromString("{{events}}", 'text/html')
-        // var eventz = dom.body.textContent
-
-        // vm.events = eventz
-        {% autoescape off %}
-
-        vm.events = {{ events }};
-        
-        {% endautoescape %}
-
-        for (event in vm.events) {
-          event.draggable = true,
-          event.actions = [{
-            label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
-            onClick: function(args) {
-              alert.show('Edited', args.calendarEvent);
-            }
-          },
-          {
-            label: '<i class=\'glyphicon glyphicon-remove\'></i>',
-            onClick: function(args) {
-              eventInfo = args.calendarEvent
-              if (confirm('Are you sure you want to delete this event?')) {
-                //delete event
-                params = {start_datetime: formatDate(eventInfo.startsAt), end_datetime: formatDate(eventInfo.endsAt), place_id: eventInfo.placeId}
-                url = './delete_event'
-                sendRequest(url, params)
-                location.reload();
-              };
-            }
-          }]
-        }
-
-        // vm.events = [
-        //   {
-        //     title: 'Event 2',
-        //     startsAt: moment().startOf('month').toDate(),
-        //     draggable: true
-        //   }
-        // ];
-        // vm.events = [{'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 03 Jan 2018 01:00:00', 'endsAt': 'Wed 03 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Tue 09 Jan 2018 01:00:00', 'endsAt': 'Tue 09 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 10 Jan 2018 01:00:00', 'endsAt': 'Wed 10 Jan 2018 01:00:00', 'draggable': true}, {'title': 1, 'placeId': 1, 'proposedBy': 'cynthiazhou', 'startsAt': 'Wed 10 Jan 2018 01:00:00', 'endsAt': 'Wed 10 Jan 2018 01:00:00', 'draggable': true}]
-
-        vm.externalEvents = [
-          {
-            title: 'Stature of Cynthia',
-            type: 'warning',
-            color: calendarConfig.colorTypes.warning,
-            startsAt: moment().startOf('month').toDate(),
-            draggable: true,
-            actions: [{
-              label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
-              onClick: function(args) {
-                alert.show('Edited', args.calendarEvent);
-              }
-            },
-            {
-              label: '<i class=\'glyphicon glyphicon-remove\'></i>',
-              onClick: function(args) {
-                eventInfo = args.calendarEvent
-                if (confirm('Are you sure you want to delete this event?')) {
-                  //delete event
-                  params = {start_datetime: formatDate(eventInfo.startsAt), end_datetime: formatDate(eventInfo.endsAt), place_id: eventInfo.placeId}
-                  url = './delete_event'
-                  sendRequest(url, params)
-                  location.reload();
-                };
-              }
-            }]
-          },
-          // {
-          //   title: 'Event 2',
-          //   type: 'danger',
-          //   color: calendarConfig.colorTypes.important,
-          //   startsAt: moment().startOf('month').toDate(),
-          //   draggable: true
-          // }
-        ];
-
-        vm.calendarView = 'month';
-        vm.viewDate = moment().startOf('month').toDate();
-        vm.cellIsOpen = false;
         
         var formatDate = function(date) {  
           console.log(date)
@@ -391,6 +307,114 @@
           xhr.responseType = 'json';
           xhr.send(formatParams(params));
         }
+
+        var vm = this;
+        
+        // var parser = new DOMParser;
+        // var dom = parser.parseFromString("{{events}}", 'text/html')
+        // var eventz = dom.body.textContent
+
+        // vm.events = eventz
+        {% autoescape off %}
+        eventsList = {{ events }};
+        poisList = {{ pois }};
+        {% endautoescape %}
+
+        for (i=0; i<eventsList.length; i++) {
+          eventsList[i].startsAt = new Date(eventsList[i].startsAt),
+          eventsList[i].endsAt = new Date(eventsList[i].endsAt),
+          eventsList[i].draggable = true,
+          eventsList[i].color = calendarConfig.colorTypes.warning,
+          eventsList[i].actions = [{
+            label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
+            onClick: function(args) {
+              alert.show('Edited', args.calendarEvent);
+            }
+          },
+          {
+            label: '<i class=\'glyphicon glyphicon-remove\'></i>',
+            onClick: function(args) {
+              eventInfo = args.calendarEvent
+              if (confirm('Are you sure you want to delete this event?')) {
+                //delete event
+                params = {start_datetime: formatDate(eventInfo.startsAt), end_datetime: formatDate(eventInfo.endsAt), place_id: eventInfo.placeId}
+                url = './delete_event'
+                sendRequest(url, params)
+                location.reload();
+              };
+            }
+          }]
+        }
+        
+        console.log(eventsList)
+        
+        vm.events = eventsList
+        
+        for (i=0; i<poisList.length; i++) {
+          poisList[i].color = calendarConfig.colorTypes.important,
+          poisList[i].draggable = true,
+          poisList[i].type = 'warning',
+          poisList[i].actions = [{
+            label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
+            onClick: function(args) {
+              alert.show('Edited', args.calendarEvent);
+            }
+          },
+          {
+            label: '<i class=\'glyphicon glyphicon-remove\'></i>',
+            onClick: function(args) {
+              eventInfo = args.calendarEvent
+              if (confirm('Are you sure you want to delete this event?')) {
+                //delete event
+                params = {start_datetime: formatDate(eventInfo.startsAt), end_datetime: formatDate(eventInfo.endsAt), place_id: eventInfo.placeId}
+                url = './delete_event'
+                sendRequest(url, params)
+                location.reload();
+              };
+            }
+          }]
+        }
+
+        vm.externalEvents = poisList
+        // vm.externalEvents = [
+        //   {
+        //     title: 'Stature of Cynthia',
+        //     type: 'warning',
+        //     color: calendarConfig.colorTypes.warning,
+        //     startsAt: moment().startOf('month').toDate(),
+        //     draggable: true,
+        //     actions: [{
+        //       label: '<i class=\'glyphicon glyphicon-pencil\'></i>',
+        //       onClick: function(args) {
+        //         alert.show('Edited', args.calendarEvent);
+        //       }
+        //     },
+        //     {
+        //       label: '<i class=\'glyphicon glyphicon-remove\'></i>',
+        //       onClick: function(args) {
+        //         eventInfo = args.calendarEvent
+        //         if (confirm('Are you sure you want to delete this event?')) {
+        //           //delete event
+        //           params = {start_datetime: formatDate(eventInfo.startsAt), end_datetime: formatDate(eventInfo.endsAt), place_id: eventInfo.placeId}
+        //           url = './delete_event'
+        //           sendRequest(url, params)
+        //           location.reload();
+        //         };
+        //       }
+        //     }]
+        //   },
+          // {
+          //   title: 'Event 2',
+          //   type: 'danger',
+          //   color: calendarConfig.colorTypes.important,
+          //   startsAt: moment().startOf('month').toDate(),
+          //   draggable: true
+          // }
+        // ];
+
+        vm.calendarView = 'month';
+        vm.viewDate = moment().startOf('month').toDate();
+        vm.cellIsOpen = false;
         
         vm.eventDropped = function(event, start, end) {
           var externalIndex = vm.externalEvents.indexOf(event);
@@ -476,7 +500,6 @@
 
     <div ng-controller="DraggableExternalEventsCtrl as vm">
 
-  {{events}}
 
   <div class="row">
     <div class="col-md-6 topleftcorner">
@@ -492,12 +515,11 @@
             ng-repeat="event in vm.externalEvents track by $index"
             mwl-draggable="true"
             drop-data="{event: event}">
-<!--             <a
+              <a
               href="javascript:;"
               ng-class="'text-' + event.type">
-              HELLO!!
-              <!-- {{ event.title }} -->
-            </a> -->
+              {{ event.title }}
+            </a>
           </li>
         </ul>
       </div>
