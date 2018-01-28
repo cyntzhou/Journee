@@ -36,19 +36,30 @@ def myinfo(request):
 def get_google_data(request):
     url = request.GET.get('url')
     response = urllib.request.urlopen(url)
+    place_id = []
+    url2 = url.split('destinations=place_id:',1)[-1]
+    url2 = url2[:url2.find("&key=")]
+    id_lst = url2.split("%7Cplace_id:")
     data = json.loads(response.read())
     destinations = data.get("destination_addresses")
     rows = data.get("rows")
     distances = []
-    for i in range(len(rows)):
-        distances.append((i, rows[i]['elements'][0]['distance']['text']))
+    for i in range(len(rows[0]['elements'])):
+        dist_mile = rows[0]['elements'][i]['distance']['text']
+        str_dist = dist_mile.split()
+        distances.append((i, float(str_dist[0])))
     distances.sort(key=lambda x: x[1])
     final_list = []
     for i in range(len(destinations)):
-        final_list.append(destinations[distances[i][0]])
-    # print(final_list)
+        j = distances[i][0]
+        overall_url = "https://maps.googleapis.com/maps/api/place/details/json?placeid="
+        overall_url += id_lst[j]
+        overall_url += "&key=AIzaSyDOeTikeScYEd-fDy9hPPzfZPAmzZIvQn8"
+        response2 = urllib.request.urlopen(overall_url)
+        data2 = json.loads(response2.read())
+        final_list.append(data2['result']['name'])
+    print(final_list)
     return render(request, "journee/map.html")
-
 
 def trips(request):
     return HttpResponse('yay!')
